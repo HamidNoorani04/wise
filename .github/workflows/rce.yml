@@ -1,0 +1,22 @@
+name: "P0 - RCE via PR Title"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  p0_exploit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run vulnerable action with PR title
+        uses: transferwise/download-repo-artifact@master
+        with:
+          # Directly inject PR title into the shell command
+          name: ${{ github.event.pull_request.title }}
+          path: "."
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
